@@ -9,8 +9,8 @@
 
 
 
-void arena_pop(mem_arena *arena, u64 size);//position -= size, destroy the last push
-void arena_pop_to(mem_arena *arena, u64 position);// position = position, destroy the arena to the position that we want
+
+
 void arena_clear(mem_arena *arena);//its for reusing the arena, establish the position at 0
 
 int main(void){
@@ -61,6 +61,23 @@ void *arena_push(mem_arena *arena, u64 size, b32 non_zero){
     // arena_push only reserves the block, it does not write to it (bytes may contain garbage).
     // if non_zero is 0, memset clears the block so the caller gets clean zeroed memory.
 
-    return out;
+    return out; //this returns where your block is like malloc does
 
+}
+
+void arena_pop(mem_arena *arena, u64 size){
+    size = MIN(size, arena->position - ARENA_BASE_POSITION); //this is a security check so the user cant pop more thatn the sizes that we actually have
+
+    arena->position -= size;
+}
+
+void arena_pop_to(mem_arena *arena, u64 position){
+    u64 size = position < arena->position ? arena->position - position : 0;//how many positions i want to pop
+
+    arena_pop(arena, size);
+}
+
+
+void arena_clear(mem_arena *arena){
+    arena_pop_to(arena, ARENA_BASE_POSITION);
 }
