@@ -13,12 +13,7 @@
 
 void arena_clear(mem_arena *arena);//its for reusing the arena, establish the position at 0
 
-int main(void){
 
-
-
-    return 0;
-}
 
 mem_arena *arena_create(u64 capacity){
     mem_arena *arena = (mem_arena *)malloc(sizeof(mem_arena) + capacity); //we are definig a place of memory for capacity + the mem_arena cast in the mem_arena sizes
@@ -80,4 +75,19 @@ void arena_pop_to(mem_arena *arena, u64 position){
 
 void arena_clear(mem_arena *arena){
     arena_pop_to(arena, ARENA_BASE_POSITION);
+}
+
+int main(void){
+    mem_arena *perm_arena = arena_create(MiB(1));
+
+    // Fat pointer: instead of just storing the address, you also carry the size.
+    //
+    // Regular pointer:
+    //   int *p = arr;        → only knows WHERE it starts, not how long it is
+    //
+    // Fat pointer (manual in C):
+    //   struct { int *ptr; size_t len; } fp = { arr, 5 };
+    //                        → knows WHERE it starts AND how long it is
+
+    arena_destroy(perm_arena);
 }
