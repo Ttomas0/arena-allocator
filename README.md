@@ -54,7 +54,7 @@ gcc -fsanitize=address -g allocator.c -o allocator && ./allocator
 
 ## Based on
 
-- [Untangling lifetimes: the arena allocator — Ryan Fleury](https://www.rfleury.com/p/untangling-lifetimes-the-arena-allocator) — via YouTube description
+- [Untangling lifetimes: the arena allocator — Ryan Fleury](https://www.rfleury.com/p/untangling-lifetimes-the-arena-allocator)
 
 ---
 
