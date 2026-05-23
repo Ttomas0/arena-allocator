@@ -24,4 +24,44 @@ A global `my_stats` header tracks overall allocator state.
 
 ---
 
-## Memory layout
+---
+
+## Build & run
+
+```bash
+# compile
+gcc -Wall -Wextra -Werror -pedantic -std=c99 allocator.c -o allocator
+
+# run
+./allocator
+
+# with address sanitizer (recommended)
+gcc -fsanitize=address -g allocator.c -o allocator && ./allocator
+```
+
+---
+
+## API reference
+
+| function / macro | description |
+|---|---|
+| `my_malloc(size)` | allocates `size` bytes from the heap; returns pointer or NULL on failure |
+| `my_free(ptr)` | frees a previously allocated block; checks magic bytes before freeing |
+| `my_stats` | global header — tracks total allocated, total freed, block count |
+| `area` (block header) | per-block metadata: size, in-use flag, prev/next pointers, magic sentinel |
+
+---
+
+## Based on
+
+- [Malloc is not magic](https://levelup.gitconnected.com/malloc-is-not-magic-implementing-my-own-memory-allocator-e0354e914402) — article walkthrough
+- [Untangling lifetimes: the arena allocator — Ryan Fleury](https://www.rfleury.com/p/untangling-lifetimes-the-arena-allocator) — via YouTube description
+
+---
+
+## Related
+
+See also `arena.c / arena.h` in this repo — a separate arena allocator
+(reserve/commit model, mmap/VirtualAlloc) developed alongside this project.
+The arena is simpler and faster for lifetime-scoped allocations; the free list
+handles general-purpose dynamic allocation.
