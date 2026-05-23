@@ -7,11 +7,15 @@
 #include "arena.h"
 
 
+u32   plat_get_pagesize(void); // returns the OS page size (typically 4096 bytes)
+
+void *plat_mem_reserve(u64 size); // reserves virtual address space without allocating physical memory
+b32   plat_mem_commit(void *ptr, u64 size);// maps physical memory to a previously reserved region
+b32   plat_mem_decommit(void *ptr, u64 size); // unmaps physical memory from a region, keeping the address space reserved
+b32   plat_mem_release(void *ptr, u64 size); // releases the reserved virtual address space back to the OS
 
 
 
-
-void arena_clear(mem_arena *arena);//its for reusing the arena, establish the position at 0
 
 
 
