@@ -61,8 +61,13 @@ typedef i32 b32;
  * @return   Smallest multiple of p that is >= n.
  */
 typedef struct {
-    u64 capacity;
+
+    u64 reserve_size;
+    u64 commit_size;
+
     u64 position;
+    u64 commit_position;
+    
 }mem_arena; //this is the actual block of memory
 
 
@@ -73,6 +78,8 @@ typedef struct {
 #define PUSH_STRUCT_NZ(arena, T) (T*)arena_push((arena), sizeof(T), true)
 #define PUSH_ARRAY(arena, T, n) (T*)arena_push((arena), n * sizeof(T), false)
 #define PUSH_ARRAY_NZ(arena, T, n) (T*)arena_push((arena), n * sizeof(T), true)
+// arena_push returns void* — a pointer with no type. (T*) tells the compiler
+// what type of data will be stored there, so it can be used directly without casting manually every time.
 
 
 
