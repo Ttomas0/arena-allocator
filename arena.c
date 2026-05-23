@@ -28,7 +28,7 @@ mem_arena *arena_create(u64 reserve_size, u64 commit_size){
     arena->reserve_size = reserve_size;
     arena->commit_size = commit_size;
     arena->position = ARENA_BASE_POSITION;
-    arena->commit_position = ARENA_BASE_POSITION + commit_size;
+    arena->commit_position = commit_size;
 
     return arena;
 
@@ -283,3 +283,19 @@ b32 plat_mem_release(void *ptr, u64 size) {
 }
 
 #endif
+
+/**
+ * @brief Build and run instructions.
+ *
+ * Compile and run:
+ *   $ gcc arena.c -o arena_test
+ *   $ ./arena_test
+ *
+ * Monitor memory usage (in a separate terminal):
+ *   $ htop
+ *   Search for 'arena_test' with F3.
+ *
+ * htop columns:
+ *   VIRT — total virtual address space reserved (fixed, set at arena_create)
+ *   RES  — physical RAM actually mapped and in use (grows with each arena_push pressing enter)
+ */
