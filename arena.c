@@ -14,7 +14,7 @@
 
 
 mem_arena *arena_create(u64 reserve_size, u64 commit_size){
-    u32 pagesize = plat_get_pagezise();
+    u32 pagesize = plat_get_pagesize();
 
     reserve_size = ALING_UP_POW2(reserve_size, pagesize);
     commit_size = ALING_UP_POW2(commit_size, pagesize);
@@ -224,5 +224,62 @@ b32   plat_mem_release(void *ptr, u64 size){
 
 }
 
+
+#else
+#include <sys/mman.h>
+#include <unistd.h>
+
+/**
+ * @brief Returns the OS page size — the minimum unit the OS uses to manage virtual memory (typically 4096 bytes).
+ * @return Page size in bytes.
+ */
+u32 plat_get_pagesize(void) {
+    return getpagesize();
+}
+
+/**
+ * @brief Reserves virtual address space without allocating physical memory.
+ * @param size Number of bytes to reserve.
+ * @return Pointer to the reserved region, or NULL on failure.
+ */
+void *plat_mem_reserve(u64 size) {
+    return mmap(
+        NULL,                        // address to reserve at — NULL lets the OS choose
+        size,                        // number of bytes to reserve
+        PROT_NONE,                   // no read/write yet, just reserve address space
+        MAP_PRIVATE | MAP_ANONYMOUS, // not backed by any file
+        -1, 0
+    );
+}
+
+/**
+ * @brief Maps physical memory to a previously reserved region.
+ * @param ptr  Address inside a reserved region.
+ * @param size Number of bytes to commit.
+ * @return true on success, false on failure.
+ */
+b32 plat_mem_commit(void *ptr, u64 size) {
+    return mprotect(ptr, size, PROT_READ | PROT_WRITE) == 0; // enables read/write on reserved region
+}
+
+/**
+ * @brief Returns physical memory to the OS, keeping the virtual address space reserved.
+ * @param ptr  Address of the region to decommit.
+ * @param size Number of bytes to decommit.
+ * @return true on success, false on failure.
+ */
+b32 plat_mem_decommit(void *ptr, u64 size) {
+    return mprotect(ptr, size, PROT_NONE) == 0; // removes read/write access, keeps address space reserved
+}
+
+/**
+ * @brief Returns physical memory to the OS and releases the virtual address space.
+ * @param ptr  Address of the region to release.
+ * @param size Number of bytes to release.
+ * @return true on success, false on failure.
+ */
+b32 plat_mem_release(void *ptr, u64 size) {
+    return munmap(ptr, size) == 0; // releases the virtual address space back to the OS
+}
 
 #endif
