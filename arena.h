@@ -69,6 +69,10 @@ typedef struct {
 #define ARENA_BASE_POSITION (sizeof(mem_arena))
 #define ARENA_ALING (sizeof(void *)) //this returns 8 that is the max that any type can give so te arena is always aling at any type
 
+#define PUSH_STRUCT(arena, T) (T*)arena_push((arena), sizeof(T), false)
+#define PUSH_STRUCT_NZ(arena, T) (T*)arena_push((arena), sizeof(T), true)
+#define PUSH_ARRAY(arena, T, n) (T*)arena_push((arena), n * sizeof(T), false)
+#define PUSH_ARRAY_NZ(arena, T, n) (T*)arena_push((arena), n * sizeof(T), true)
 
 
 
